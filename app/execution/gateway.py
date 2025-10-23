@@ -59,7 +59,10 @@ class CCXTGateway:
     def _rate_limit(self):
         """Apply rate limiting."""
         if self.exchange_instance:
-            self.exchange_instance.sleep()
+            try:
+                self.exchange_instance.sleep(1000)  # Sleep for 1 second
+            except:
+                time.sleep(1)  # Fallback sleep
     
     def _log_trade(self, action: str, data: Dict[str, Any]):
         """Log trade activity."""

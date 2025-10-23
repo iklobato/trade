@@ -1,0 +1,35 @@
+[Unit]
+Description=ML Trading System - 24/7 Automated Crypto Trading
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=trading
+Group=trading
+WorkingDirectory=/Users/iklo/crypto
+ExecStart=/usr/local/bin/uv run python app/main.py --mode paper --daemon
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ml-trading
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/Users/iklo/crypto/app/logs /Users/iklo/crypto/app/reports /Users/iklo/crypto/app/artifacts /Users/iklo/crypto/app/data
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Environment
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONPATH=/Users/iklo/crypto
+
+[Install]
+WantedBy=multi-user.target

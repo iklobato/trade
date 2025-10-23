@@ -18,14 +18,16 @@ costs:
 
 risk:
   risk_per_trade: 0.005
-  max_pos: 1.0
+  max_pos: 0.1  # Conservative 10% max position for 24/7 operation
 vol_window: 60
 
 execution:
   engine: "ccxt"
   exchange: "kraken"
-  trade_mode: "live"
+  trade_mode: "paper"  # Start with paper trading for safety
   polling_interval_sec: 60
+  max_retries: 3
+  retry_delay_sec: 5
 
 model:
   type: "xgb"
@@ -43,8 +45,46 @@ cv:
 
 scheduler:
   type: "APScheduler"
-  interval_minutes: 60
+  interval_minutes: 15  # More frequent predictions for 24/7
   retrain_daily: true
+  health_check_interval: 300  # 5 minutes
+  max_consecutive_errors: 5
+  emergency_recovery_enabled: true
+
+# 24/7 Operation Settings
+operation:
+  mode: "continuous"  # continuous, maintenance_window, business_hours
+  maintenance_window:
+    start: "02:00"  # 2 AM UTC
+    duration_hours: 2
+  business_hours:
+    start: "00:00"  # 24/7 for crypto
+    end: "23:59"
+  timezone: "UTC"
+
+# Monitoring and Alerting
+monitoring:
+  enabled: true
+  health_check_interval: 300  # 5 minutes
+  performance_alerts:
+    enabled: true
+    max_drawdown_threshold: 0.1  # 10%
+    min_win_rate_threshold: 0.6  # 60%
+    max_error_rate_threshold: 0.1  # 10%
+  log_retention_days: 30
+  report_generation:
+    daily: true
+    weekly: true
+    monthly: true
+
+# Safety Controls for 24/7 Operation
+safety:
+  max_daily_loss: 0.05  # 5% max daily loss
+  max_position_size: 0.1  # 10% max position
+  emergency_stop_enabled: true
+  auto_close_on_errors: true
+  max_open_positions: 3
+  position_timeout_hours: 24  # Close positions after 24 hours
 
 plots: true
 seed: 42
