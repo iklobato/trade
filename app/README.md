@@ -165,8 +165,7 @@ model:
 # Execution Settings
 execution:
   engine: "ccxt"
-  primary_exchange: "coinbase"
-  secondary_exchange: "kraken"
+  exchange: "kraken"
   trade_mode: "live"       # or "paper"
 ```
 

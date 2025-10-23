@@ -22,91 +22,51 @@ class CCXTGateway:
     """
     
     def __init__(self, 
-                 primary_exchange: str = "coinbase",
-                 secondary_exchange: str = "kraken",
+                 exchange: str = "kraken",
                  trade_mode: str = "live",
                  sandbox: bool = False):
-        self.primary_exchange = primary_exchange
-        self.secondary_exchange = secondary_exchange
+        self.exchange = exchange
         self.trade_mode = trade_mode
         self.sandbox = sandbox
         
-        self.exchanges = {}
-        self.active_exchange = None
+        self.exchange_instance = None
         self.logs_dir = Path("./app/execution/logs")
         self.logs_dir.mkdir(parents=True, exist_ok=True)
         
-        # Initialize exchanges
-        self._initialize_exchanges()
+        # Initialize exchange
+        self._initialize_exchange()
         
-    def _initialize_exchanges(self):
-        """Initialize exchange connections."""
+    def _initialize_exchange(self):
+        """Initialize exchange connection."""
         try:
-            # Initialize primary exchange
-            if self.primary_exchange == "coinbase":
-                self.exchanges['coinbase'] = ccxt.coinbase({
-                    'apiKey': os.getenv('COINBASE_API_KEY', ''),
-                    'secret': os.getenv('COINBASE_SECRET', ''),
-                    'passphrase': os.getenv('COINBASE_PASSPHRASE', ''),
-                    'enableRateLimit': True,
-                    'sandbox': self.sandbox,
-                    'options': {
-                        'defaultType': 'spot'
-                    }
-                })
-            elif self.primary_exchange == "kraken":
-                self.exchanges['kraken'] = ccxt.kraken({
+            if self.exchange == "kraken":
+                self.exchange_instance = ccxt.kraken({
                     'apiKey': os.getenv('KRAKEN_API_KEY', ''),
                     'secret': os.getenv('KRAKEN_SECRET', ''),
                     'enableRateLimit': True,
                     'sandbox': self.sandbox
                 })
+            else:
+                raise ValueError(f"Unsupported exchange: {self.exchange}")
             
-            # Initialize secondary exchange
-            if self.secondary_exchange == "coinbase":
-                self.exchanges['coinbase'] = ccxt.coinbase({
-                    'apiKey': os.getenv('COINBASE_API_KEY', ''),
-                    'secret': os.getenv('COINBASE_SECRET', ''),
-                    'passphrase': os.getenv('COINBASE_PASSPHRASE', ''),
-                    'enableRateLimit': True,
-                    'sandbox': self.sandbox,
-                    'options': {
-                        'defaultType': 'spot'
-                    }
-                })
-            elif self.secondary_exchange == "kraken":
-                self.exchanges['kraken'] = ccxt.kraken({
-                    'apiKey': os.getenv('KRAKEN_API_KEY', ''),
-                    'secret': os.getenv('KRAKEN_SECRET', ''),
-                    'enableRateLimit': True,
-                    'sandbox': self.sandbox
-                })
-            
-            # Set active exchange
-            self.active_exchange = self.exchanges.get(self.primary_exchange)
-            
-            if self.active_exchange is None:
-                raise ValueError(f"Failed to initialize primary exchange: {self.primary_exchange}")
-            
-            logger.info(f"Initialized exchanges: {list(self.exchanges.keys())}")
-            logger.info(f"Active exchange: {self.primary_exchange}")
+            logger.info(f"Initialized {self.exchange} exchange")
             logger.info(f"Trade mode: {self.trade_mode}")
             
         except Exception as e:
-            logger.error(f"Failed to initialize exchanges: {e}")
+            logger.error(f"Failed to initialize {self.exchange}: {e}")
             raise
     
     def _rate_limit(self):
         """Apply rate limiting."""
-        if self.active_exchange:
-            self.active_exchange.sleep()
+        if self.exchange_instance:
+            self.exchange_instance.sleep()
     
     def _log_trade(self, action: str, data: Dict[str, Any]):
         """Log trade activity."""
         log_entry = {
             'timestamp': datetime.now().isoformat(),
             'action': action,
-            'exchange': self.primary_exchange,
+            'exchange': self.exchange,
             'data': data
         }
         
@@ -131,7 +91,7 @@ class CCXTGateway:
                 return {'USD': 10000.0, 'BTC': 0.0, 'ETH': 0.0}
             
             self._rate_limit()
-            balance = self.active_exchange.fetch_balance()
+            balance = self.exchange_instance.fetch_balance()
             
             # Extract free balances
             free_balance = {k: v['free'] for k, v in balance.items() if v['free'] > 0}
@@ -155,7 +115,7 @@ class CCXTGateway:
         """
         try:
             self._rate_limit()
-            ticker = self.active_exchange.fetch_ticker(symbol)
+            ticker = self.exchange_instance.fetch_ticker(symbol)
             
             return {
                 'symbol': symbol,
@@ -183,7 +143,7 @@ class CCXTGateway:
         """
         try:
             self._rate_limit()
-            orderbook = self.active_exchange.fetch_order_book(symbol, limit)
+            orderbook = self.exchange_instance.fetch_order_book(symbol, limit)
             
             return {
                 'symbol': symbol,
@@ -230,7 +190,7 @@ class CCXTGateway:
                 return order
             
             self._rate_limit()
-            order = self.active_exchange.create_market_order(symbol, side, amount)
+            order = self.exchange_instance.create_market_order(symbol, side, amount)
             
             self._log_trade('market_order', order)
             logger.info(f"Market {side} order created: {amount} {symbol}")
@@ -273,7 +233,7 @@ class CCXTGateway:
                 return order
             
             self._rate_limit()
-            order = self.active_exchange.create_limit_order(symbol, side, amount, price)
+            order = self.exchange_instance.create_limit_order(symbol, side, amount, price)
             
             self._log_trade('limit_order', order)
             logger.info(f"Limit {side} order created: {amount} {symbol} at {price}")
@@ -303,7 +263,7 @@ class CCXTGateway:
                 return True
             
             self._rate_limit()
-            result = self.active_exchange.cancel_order(order_id, symbol)
+            result = self.exchange_instance.cancel_order(order_id, symbol)
             
             self._log_trade('cancel_order', {'order_id': order_id, 'symbol': symbol, 'result': result})
             logger.info(f"Order cancelled: {order_id}")
@@ -336,7 +296,7 @@ class CCXTGateway:
                 }
             
             self._rate_limit()
-            order = self.active_exchange.fetch_order(order_id, symbol)
+            order = self.exchange_instance.fetch_order(order_id, symbol)
             
             return order
             
@@ -360,7 +320,7 @@ class CCXTGateway:
                 return []
             
             self._rate_limit()
-            orders = self.active_exchange.fetch_open_orders(symbol)
+            orders = self.exchange_instance.fetch_open_orders(symbol)
             
             return orders
             
@@ -384,7 +344,7 @@ class CCXTGateway:
                 return {'maker': 0.001, 'taker': 0.001}
             
             self._rate_limit()
-            fees = self.active_exchange.fetch_trading_fees(symbol)
+            fees = self.exchange_instance.fetch_trading_fees(symbol)
             
             return fees
             
@@ -406,7 +366,7 @@ class CCXTGateway:
             logger.error(f"Exchange {exchange_name} not available")
             return False
         
-        self.active_exchange = self.exchanges[exchange_name]
+        self.exchange_instance = self.exchanges[exchange_name]
         logger.info(f"Switched to exchange: {exchange_name}")
         
         return True
@@ -419,12 +379,10 @@ class CCXTGateway:
             Dictionary with exchange information
         """
         info = {
-            'primary_exchange': self.primary_exchange,
-            'secondary_exchange': self.secondary_exchange,
-            'active_exchange': self.primary_exchange,
+            'exchange': self.exchange,
             'trade_mode': self.trade_mode,
             'sandbox': self.sandbox,
-            'available_exchanges': list(self.exchanges.keys())
+            'available_exchanges': [self.exchange]
         }
         
         return info

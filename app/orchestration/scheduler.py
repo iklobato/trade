@@ -98,8 +98,7 @@ class TradingOrchestrator:
         
         # Execution components
         self.gateway = CCXTGateway(
-            primary_exchange=self.config['execution']['primary_exchange'],
-            secondary_exchange=self.config['execution']['secondary_exchange'],
+            exchange=self.config['execution']['exchange'],
             trade_mode=self.config['execution']['trade_mode'],
             sandbox=False
         )

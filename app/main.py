@@ -66,7 +66,7 @@ def main():
         logger.info(f"Configuration: {args.config}")
         logger.info(f"Trading Mode: {config['execution']['trade_mode']}")
         logger.info(f"Symbol: {config['symbol']}")
-        logger.info(f"Exchange: {config['execution']['primary_exchange']}")
+        logger.info(f"Exchange: {config['execution']['exchange']}")
         logger.info("=" * 60)
         
         # Initialize orchestrator

@@ -320,13 +320,11 @@ class TestExecutionGateway:
     def test_gateway_initialization(self):
         """Test gateway initialization."""
         gateway = CCXTGateway(
-            primary_exchange="coinbase",
-            secondary_exchange="kraken",
+            exchange="kraken",
             trade_mode="paper"
         )
         
-        assert gateway.primary_exchange == "coinbase"
-        assert gateway.secondary_exchange == "kraken"
+        assert gateway.exchange == "kraken"
         assert gateway.trade_mode == "paper"
     
     def test_paper_trading_mode(self):
