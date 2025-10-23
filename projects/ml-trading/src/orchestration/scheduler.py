@@ -20,15 +20,15 @@ from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 from loguru import logger
 
-from app.data.polygon_flatfiles_downloader import PolygonFlatFilesDownloader
-from app.data.polygon_loader import PolygonLoader
-from app.features.engineer import FeatureEngineer
-from app.labels.targets import LabelGenerator
-from app.models.classifier import XGBoostClassifier
-from app.backtest.simulator import BacktestSimulator
-from app.execution.gateway import CCXTGateway
-from app.execution.trade_manager import TradeManager
-from app.utils.seed import set_seed
+from src.data.polygon_flatfiles_downloader import PolygonFlatFilesDownloader
+from src.data.polygon_loader import PolygonLoader
+from src.features.engineer import FeatureEngineer
+from src.labels.targets import LabelGenerator
+from src.models.classifier import XGBoostClassifier
+from src.backtest.simulator import BacktestSimulator
+from src.execution.gateway import CCXTGateway
+from src.execution.trade_manager import TradeManager
+from src.utils.seed import set_seed
 
 
 class TradingOrchestrator:
@@ -229,7 +229,7 @@ class TradingOrchestrator:
         }
 
         # Save error to file
-        error_file = Path("./app/logs/errors.json")
+        error_file = Path("./src/logs/errors.json")
         error_file.parent.mkdir(parents=True, exist_ok=True)
 
         with open(error_file, "a") as f:
@@ -450,7 +450,7 @@ class TradingOrchestrator:
             health_status["issues"] = issues
 
             # Save health status
-            health_file = Path("./app/logs/health_status.json")
+            health_file = Path("./src/logs/health_status.json")
             health_file.parent.mkdir(parents=True, exist_ok=True)
 
             with open(health_file, "w") as f:
@@ -472,7 +472,7 @@ class TradingOrchestrator:
             logger.info("Starting weekly system maintenance...")
 
             # Clean up old log files (keep last 30 days)
-            log_dir = Path("./app/logs")
+            log_dir = Path("./src/logs")
             if log_dir.exists():
                 cutoff_date = datetime.now() - timedelta(days=30)
                 for log_file in log_dir.glob("*.log"):
@@ -596,7 +596,7 @@ class TradingOrchestrator:
     def _get_health_summary(self):
         """Get health check summary."""
         try:
-            health_file = Path("./app/logs/health_status.json")
+            health_file = Path("./src/logs/health_status.json")
             if health_file.exists():
                 with open(health_file, "r") as f:
                     return json.load(f)

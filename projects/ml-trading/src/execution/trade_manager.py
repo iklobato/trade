@@ -9,8 +9,8 @@ import logging
 import json
 from dataclasses import dataclass, asdict
 
-from app.execution.gateway import CCXTGateway
-from app.utils.costs import calculate_position_sizing, calculate_trading_costs
+from src.execution.gateway import CCXTGateway
+from src.utils.costs import calculate_position_sizing, calculate_trading_costs
 
 logger = logging.getLogger(__name__)
 

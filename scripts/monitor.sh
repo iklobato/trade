@@ -1,9 +1,9 @@
 #!/bin/bash
 # ML Trading System Monitoring Script for 24/7 Operation
 
-LOG_DIR="./app/logs"
+LOG_DIR="./projects/ml-trading/src/logs"
 STATUS_FILE="$LOG_DIR/health_status.json"
-PID_FILE="./app/trading.pid"
+PID_FILE="./projects/ml-trading/trading.pid"
 
 echo "=== ML Trading System Monitor ==="
 echo "Timestamp: $(date)"
@@ -19,7 +19,7 @@ if [ -f "$PID_FILE" ]; then
         echo "✗ System PID file exists but process not running"
     fi
 else
-    if pgrep -f "python app/main.py" > /dev/null; then
+    if pgrep -f "python projects/ml-trading/main.py" > /dev/null; then
         echo "✓ System is running (no PID file)"
     else
         echo "✗ System is not running"
@@ -96,11 +96,11 @@ fi
 # Performance summary
 echo
 echo "=== Performance Summary ==="
-if [ -f "./app/reports/summary.json" ]; then
+if [ -f "./projects/ml-trading/src/reports/summary.json" ]; then
     if command -v jq > /dev/null; then
-        TOTAL_RETURN=$(jq -r '.total_return' "./app/reports/summary.json" 2>/dev/null)
-        WIN_RATE=$(jq -r '.win_rate' "./app/reports/summary.json" 2>/dev/null)
-        NUM_TRADES=$(jq -r '.num_trades' "./app/reports/summary.json" 2>/dev/null)
+        TOTAL_RETURN=$(jq -r '.total_return' "./projects/ml-trading/src/reports/summary.json" 2>/dev/null)
+        WIN_RATE=$(jq -r '.win_rate' "./projects/ml-trading/src/reports/summary.json" 2>/dev/null)
+        NUM_TRADES=$(jq -r '.num_trades' "./projects/ml-trading/src/reports/summary.json" 2>/dev/null)
         
         if [ "$TOTAL_RETURN" != "null" ]; then
             echo "Total Return: $TOTAL_RETURN"
@@ -140,7 +140,7 @@ fi
 echo
 echo "=== Quick Commands ==="
 echo "View live logs: tail -f $LOG_DIR/trading_$TODAY.log"
-echo "Check status: uv run python app/main.py --status"
-echo "Restart system: uv run python app/main.py --restart"
-echo "Stop system: pkill -f 'python app/main.py'"
-echo "Start system: uv run python app/main.py --mode paper"
+echo "Check status: uv run python projects/ml-trading/main.py --status"
+echo "Restart system: uv run python projects/ml-trading/main.py --restart"
+echo "Stop system: pkill -f 'python projects/ml-trading/main.py'"
+echo "Start system: uv run python projects/ml-trading/main.py --mode paper"

@@ -11,14 +11,14 @@ import yaml
 import json
 from datetime import datetime
 
-from orchestration.scheduler import TradingOrchestrator
-from utils.seed import set_seed
+from src.orchestration.scheduler import TradingOrchestrator
+from src.utils.seed import set_seed
 
 
 # Configure enhanced logging for 24/7 operation
 def setup_logging():
     """Setup comprehensive logging for 24/7 operation."""
-    log_dir = Path("./app/logs")
+    log_dir = Path("./src/logs")
     log_dir.mkdir(parents=True, exist_ok=True)
 
     # Configure loguru for better 24/7 logging
@@ -89,7 +89,7 @@ def main():
     parser.add_argument(
         "--config",
         type=str,
-        default="./app/config.yaml",
+        default="./config.yaml",
         help="Path to configuration file",
     )
     parser.add_argument(

@@ -1,0 +1,45 @@
+# Exchange configurations for shared use across projects
+
+exchanges:
+  kraken:
+    name: "Kraken"
+    base_url: "https://api.kraken.com"
+    rate_limit: 1.0  # seconds between requests
+    supported_symbols:
+      - "BTC/USD"
+      - "ETH/USD"
+      - "BTC/EUR"
+      - "ETH/EUR"
+    
+  binance:
+    name: "Binance"
+    base_url: "https://api.binance.com"
+    rate_limit: 0.1
+    supported_symbols:
+      - "BTCUSDT"
+      - "ETHUSDT"
+      - "ADAUSDT"
+      - "DOTUSDT"
+    
+  coinbase:
+    name: "Coinbase Pro"
+    base_url: "https://api.pro.coinbase.com"
+    rate_limit: 0.5
+    supported_symbols:
+      - "BTC-USD"
+      - "ETH-USD"
+      - "LTC-USD"
+
+# Common trading parameters
+trading:
+  default_fee_rate: 0.001  # 0.1%
+  default_slippage: 0.0005  # 0.05%
+  min_order_size: 0.001
+  max_position_size: 0.1  # 10% of portfolio
+  
+# Risk management defaults
+risk:
+  max_daily_loss: 0.05  # 5%
+  max_position_size: 0.1  # 10%
+  stop_loss_atr_multiplier: 2.0
+  take_profit_atr_multiplier: 3.0

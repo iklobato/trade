@@ -11,17 +11,17 @@ import shutil
 from pathlib import Path
 
 # Import system components
-from app.data.polygon_flatfiles_downloader import PolygonFlatFilesDownloader
-from app.data.polygon_loader import PolygonLoader
-from app.features.engineer import FeatureEngineer
-from app.labels.targets import LabelGenerator
-from app.models.classifier import XGBoostClassifier
-from app.backtest.simulator import BacktestSimulator
-from app.execution.gateway import CCXTGateway
-from app.execution.trade_manager import TradeManager
-from app.utils.seed import set_seed
-from app.utils.costs import calculate_trading_costs, calculate_position_sizing
-from app.utils.splits import create_time_series_splits
+from src.data.polygon_flatfiles_downloader import PolygonFlatFilesDownloader
+from src.data.polygon_loader import PolygonLoader
+from src.features.engineer import FeatureEngineer
+from src.labels.targets import LabelGenerator
+from src.models.classifier import XGBoostClassifier
+from src.backtest.simulator import BacktestSimulator
+from src.execution.gateway import CCXTGateway
+from src.execution.trade_manager import TradeManager
+from src.utils.seed import set_seed
+from src.utils.costs import calculate_trading_costs, calculate_position_sizing
+from src.utils.splits import create_time_series_splits
 
 
 class TestDataComponents:

@@ -55,16 +55,15 @@ Thumbs.db
 secrets.yaml
 api_keys.yaml
 
-# Data cache and downloads
-app/data/cache/
-app/data/downloads/
-*.csv.gz
-*.parquet
+# Data files (keep raw data out of git)
+data/raw/*.csv
+data/processed/*
+data/cache/*
 
 # Model artifacts and logs
-app/artifacts/
-app/logs/
-app/reports/
+projects/ml-trading/src/artifacts/
+projects/ml-trading/src/logs/
+projects/ml-trading/src/reports/
 *.log
 *.joblib
 *.pkl
