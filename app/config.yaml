@@ -1,0 +1,51 @@
+symbol: "BTC/USD"
+timeframe: "1min"
+start: "2019-01-01"
+end: "2025-12-31"
+
+polygon_api_key: "YOUR_POLYGON_API_KEY_HERE"
+data_source: "polygon_flatfiles"
+data_root: "./app/data/cache"
+
+horizon_minutes: 10
+thresholds:
+  up: 0.002
+  down: -0.002
+
+costs:
+  fee_bps: 5
+  slippage_bps: 3
+
+risk:
+  risk_per_trade: 0.005
+  max_pos: 1.0
+vol_window: 60
+
+execution:
+  engine: "ccxt"
+  primary_exchange: "coinbase"
+  secondary_exchange: "kraken"
+  trade_mode: "live"
+  polling_interval_sec: 60
+
+model:
+  type: "xgb"
+  params:
+    max_depth: 5
+    eta: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    n_rounds: 400
+
+cv:
+  n_folds: 6
+  train_frac: 0.75
+  test_len: "7D"
+
+scheduler:
+  type: "APScheduler"
+  interval_minutes: 60
+  retrain_daily: true
+
+plots: true
+seed: 42

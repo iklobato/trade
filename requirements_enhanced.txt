@@ -1,0 +1,22 @@
+# Core dependencies
+pandas>=1.5.0
+numpy>=1.21.0
+matplotlib>=3.5.0
+scikit-learn>=1.1.0
+
+# Advanced trading libraries
+TA-Lib>=0.4.25
+vectorbt>=0.25.0
+ccxt>=4.0.0
+optuna>=3.0.0
+
+# Additional useful libraries
+seaborn>=0.11.0
+plotly>=5.0.0
+yfinance>=0.2.0
+requests>=2.28.0
+
+# Optional: For live trading
+websocket-client>=1.4.0
+python-dotenv>=0.19.0
+
